@@ -1,0 +1,50 @@
+name: Build Android 7.0+ APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Initialize Capacitor and Android 7.0+ Project
+        run: |
+          mkdir -p www
+          cp index.html www/
+          npm install
+          npx cap init "AuraStage AI" "com.aurastage.app" --web-dir www
+          npx cap add android
+          sed -i 's/minSdkVersion = [0-9]*/minSdkVersion = 24/' android/variables.gradle
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />' android/app/src/main/AndroidManifest.xml
+          npx cap sync android
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AuraStageAI-Android7plus
+          path: android/app/build/outputs/apk/debug/app-debug.apk
