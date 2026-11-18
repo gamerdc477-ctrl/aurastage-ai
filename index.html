@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AuraStage AI — Music & Video Studio</title>
+  <title>AuraStage AI Pro — Mobile Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -11,15 +11,7 @@
       theme: {
         extend: {
           colors: {
-            studio: {
-              bg: '#09090b',
-              panel: '#121216',
-              card: '#18181f',
-              border: '#272732',
-              accent: '#8b5cf6',
-              cyan: '#06b6d4',
-              pink: '#ec4899'
-            }
+            studio: { bg: '#070709', panel: '#111116', card: '#181820', border: '#252532', accent: '#8b5cf6', cyan: '#06b6d4', pink: '#ec4899', green: '#10b981' }
           }
         }
       }
@@ -27,202 +19,196 @@
   </script>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body { background: #09090b; color: #f4f4f5; font-family: system-ui, -apple-system, sans-serif; margin: 0; overflow-x: hidden; }
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: #09090b; }
-    ::-webkit-scrollbar-thumb { background: #272732; border-radius: 4px; }
+    body { background: #070709; color: #f4f4f5; font-family: system-ui, -apple-system, sans-serif; margin: 0; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-thumb { background: #252532; border-radius: 4px; }
     .tab-active { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; border-color: transparent; }
     input[type="range"] { accent-color: #8b5cf6; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- Top Studio Header -->
+  <!-- Header -->
   <header class="bg-studio-panel border-b border-studio-border px-3 py-2.5 flex items-center justify-between sticky top-0 z-30">
     <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-400 flex items-center justify-center font-black text-sm shadow-lg">AS</div>
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-400 flex items-center justify-center font-black text-xs shadow-lg text-white">PRO</div>
       <div>
-        <h1 class="text-sm font-bold tracking-tight leading-none">AuraStage <span class="text-cyan-400">AI</span></h1>
+        <h1 class="text-sm font-bold tracking-tight leading-none">AuraStage <span class="text-cyan-400">AI Pro</span></h1>
         <p class="text-[10px] text-zinc-400">Producer & Video Studio</p>
       </div>
     </div>
     <div class="flex items-center gap-1.5">
-      <button onclick="openSettings()" class="px-2.5 py-1.5 text-xs bg-studio-card border border-studio-border rounded-lg text-zinc-300 hover:text-white">API Key</button>
-      <button onclick="openExportModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow">Export</button>
+      <button onclick="openSettings()" class="px-2.5 py-1.5 text-xs bg-studio-card border border-studio-border rounded-lg text-zinc-300 hover:text-white">⚙️ API</button>
+      <button onclick="openExportModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow">🎬 Export</button>
     </div>
   </header>
 
-  <!-- Main Stage Preview (Video & Visualizer Canvas) -->
+  <!-- Stage Canvas Preview -->
   <section class="bg-black border-b border-studio-border p-3 flex flex-col items-center">
-    <div class="w-full max-w-2xl relative rounded-xl overflow-hidden border border-studio-border bg-zinc-950 shadow-2xl flex items-center justify-center" id="stageContainer" style="aspect-ratio: 16/9;">
+    <div class="w-full max-w-2xl relative rounded-2xl overflow-hidden border border-studio-border bg-zinc-950 shadow-2xl flex items-center justify-center" id="stageContainer" style="aspect-ratio: 16/9;">
       <canvas id="stageCanvas" width="960" height="540" class="w-full h-full object-contain"></canvas>
       <div id="recBadge" class="hidden absolute top-2.5 left-2.5 bg-red-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1.5 animate-pulse">
-        <span class="w-2 h-2 rounded-full bg-white"></span> RENDERING VIDEO
+        <span class="w-2 h-2 rounded-full bg-white"></span> RENDERING 4K PRO VIDEO
       </div>
       <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur px-2 py-0.5 rounded text-[10px] text-zinc-300 border border-white/10" id="aspectLabel">16:9 • 1080p</div>
     </div>
 
-    <!-- Transport Controls -->
+    <!-- Transport Bar -->
     <div class="w-full max-w-2xl mt-2.5 flex items-center justify-between gap-2 bg-studio-panel border border-studio-border rounded-xl px-3 py-2">
       <div class="flex items-center gap-2">
         <button id="playPauseBtn" onclick="togglePlayback()" class="w-9 h-9 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center text-white font-bold text-sm shadow">▶</button>
         <button onclick="stopPlayback()" class="w-8 h-8 rounded-lg bg-studio-card border border-studio-border flex items-center justify-center text-xs text-zinc-300">■</button>
-        <div class="text-xs font-mono text-zinc-300 ml-1" id="timeDisplay">00:00 / 00:15</div>
+        <div class="text-xs font-mono text-zinc-300 ml-1" id="timeDisplay">00:00 / 00:30</div>
       </div>
       <div class="flex items-center gap-1.5">
         <select id="aspectSelect" onchange="changeAspectRatio(this.value)" class="bg-studio-card border border-studio-border text-xs rounded-lg px-2 py-1.5 text-zinc-200">
           <option value="16:9">16:9 YouTube</option>
-          <option value="9:16">9:16 Reels/TikTok</option>
-          <option value="1:1">1:1 Album Cover</option>
-          <option value="4:5">4:5 Feed</option>
+          <option value="9:16">9:16 Reels / TikTok</option>
+          <option value="1:1">1:1 Square Cover</option>
+          <option value="2.39:1">2.39:1 Cinemascope</option>
         </select>
       </div>
     </div>
   </section>
 
   <!-- Navigation Tabs -->
-  <nav class="grid grid-cols-4 gap-1 p-2 bg-studio-panel border-b border-studio-border sticky top-[53px] z-20">
-    <button onclick="switchTab('image')" id="tab-image" class="tab-active py-2 px-1 rounded-lg border border-studio-border text-[11px] font-semibold">🎨 Image AI</button>
-    <button onclick="switchTab('video')" id="tab-video" class="py-2 px-1 rounded-lg border border-studio-border bg-studio-card text-zinc-300 text-[11px] font-semibold">🎬 Video FX</button>
-    <button onclick="switchTab('music')" id="tab-music" class="py-2 px-1 rounded-lg border border-studio-border bg-studio-card text-zinc-300 text-[11px] font-semibold">🎹 Music/Vocals</button>
-    <button onclick="switchTab('lyrics')" id="tab-lyrics" class="py-2 px-1 rounded-lg border border-studio-border bg-studio-card text-zinc-300 text-[11px] font-semibold">🎤 Lyrics AI</button>
+  <nav class="grid grid-cols-5 gap-1 p-2 bg-studio-panel border-b border-studio-border sticky top-[53px] z-20">
+    <button onclick="switchTab('visual')" id="tab-visual" class="tab-active py-2 px-1 rounded-lg border border-studio-border text-[10px] font-semibold">🎨 Visuals</button>
+    <button onclick="switchTab('director')" id="tab-director" class="py-2 px-1 rounded-lg border border-studio-border bg-studio-card text-zinc-300 text-[10px] font-semibold">🎥 Director</button>
+    <button onclick="switchTab('beats')" id="tab-beats" class="py-2 px-1 rounded-lg border border-studio-border bg-studio-card text-zinc-300 text-[10px] font-semibold">🎹 Beats</button>
+    <button onclick="switchTab('lyrics')" id="tab-lyrics" class="py-2 px-1 rounded-lg border border-studio-border bg-studio-card text-zinc-300 text-[10px] font-semibold">📝 Lyrics</button>
+    <button onclick="switchTab('icon')" id="tab-icon" class="py-2 px-1 rounded-lg border border-studio-border bg-studio-card text-cyan-400 text-[10px] font-bold">✨ App Icon</button>
   </nav>
 
-  <!-- Workspace Panels -->
-  <main class="flex-1 p-3 max-w-2xl w-full mx-auto space-y-4 pb-16">
+  <!-- Main Panels -->
+  <main class="flex-1 p-3 max-w-2xl w-full mx-auto space-y-4 pb-20">
 
-    <!-- 1. IMAGE AI STUDIO -->
-    <div id="panel-image" class="space-y-3">
+    <!-- 1. VISUAL & SCENE GENERATOR -->
+    <div id="panel-visual" class="space-y-3">
       <div class="bg-studio-panel border border-studio-border rounded-xl p-3 space-y-3">
         <div class="flex justify-between items-center">
-          <h2 class="text-xs font-bold uppercase tracking-wider text-purple-400">AI Cover & Scene Generator</h2>
-          <span class="text-[10px] text-zinc-400">Text-to-Image</span>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-purple-400">Pro Scene & Cover Generator</h2>
+          <span class="text-[10px] text-cyan-400 font-mono">Neural Shader v3</span>
         </div>
-        <textarea id="imgPrompt" rows="2" placeholder="Describe your album cover or music video scene (e.g., Neon cyberpunk singer in rain, volumetric purple lights, 8k)..." class="w-full bg-studio-card border border-studio-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"></textarea>
-        <input id="negPrompt" type="text" placeholder="Negative prompt (e.g., blurry, watermark, distorted hands)" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-1.5 text-xs text-zinc-300 focus:outline-none" />
+        <textarea id="imgPrompt" rows="2" placeholder="Describe music video set (e.g., Cyberpunk recording studio, volumetric laser light show, 8k)..." class="w-full bg-studio-card border border-studio-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"></textarea>
         
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="text-[10px] text-zinc-400 block mb-1">Visual Style</label>
-            <select id="stylePreset" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs text-white">
-              <option value="Cinematic Neon">Cinematic Neon</option>
-              <option value="Cyberpunk 2099">Cyberpunk 2099</option>
-              <option value="Lo-Fi Anime">Lo-Fi Anime</option>
-              <option value="3D Unreal Render">3D Unreal Render</option>
-              <option value="Retro 90s VHS">Retro 90s VHS</option>
-              <option value="Luxury Editorial">Luxury Editorial</option>
+            <label class="text-[10px] text-zinc-400 block mb-1">Lighting & Atmosphere</label>
+            <select id="lightingPreset" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs text-white">
+              <option value="Neon Cyber">Neon Cyberpunk Glow</option>
+              <option value="Golden Hour">Warm Golden Hour</option>
+              <option value="Moody Noir">Moody Noir Shadows</option>
+              <option value="Strobe Laser">Concert Laser Strobe</option>
+              <option value="Holographic">Holographic Studio</option>
             </select>
           </div>
           <div class="flex items-end">
-            <button onclick="generateVisualArt()" id="genImgBtn" class="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 font-bold text-xs text-white shadow-lg active:scale-95 transition">✨ Generate Scene</button>
+            <button onclick="generateVisualArt()" id="genImgBtn" class="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 font-bold text-xs text-white shadow-lg active:scale-95 transition">✨ Render Scene</button>
           </div>
         </div>
 
-        <!-- Upload Custom Photo/Cover -->
         <div class="pt-2 border-t border-studio-border flex items-center justify-between">
-          <span class="text-[11px] text-zinc-400">Or load your own artwork/photo:</span>
+          <span class="text-[11px] text-zinc-400">Import custom artwork/photo:</span>
           <label class="px-3 py-1.5 bg-studio-card border border-studio-border rounded-lg text-xs cursor-pointer hover:border-purple-500">
-            📁 Upload Image
+            📁 Choose File
             <input type="file" accept="image/*" onchange="handleImageUpload(event)" class="hidden" />
           </label>
         </div>
       </div>
 
-      <!-- Generated Gallery -->
+      <!-- Gallery Grid -->
       <div class="bg-studio-panel border border-studio-border rounded-xl p-3">
-        <h3 class="text-xs font-bold text-zinc-300 mb-2">Scene Gallery (Tap to Load on Stage)</h3>
+        <h3 class="text-xs font-bold text-zinc-300 mb-2">Scene Bank (Tap to Load)</h3>
         <div id="galleryGrid" class="grid grid-cols-3 gap-2"></div>
       </div>
     </div>
 
-    <!-- 2. VIDEO FX & ANIMATION ENGINE -->
-    <div id="panel-video" class="hidden space-y-3">
+    <!-- 2. PROFESSIONAL DIRECTOR & CAMERA FX -->
+    <div id="panel-director" class="hidden space-y-3">
       <div class="bg-studio-panel border border-studio-border rounded-xl p-3 space-y-3">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Music Video Motion & FX</h2>
+        <h2 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Cinematic Director Suite</h2>
         
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="text-[10px] text-zinc-400 block mb-1">Generation Mode</label>
-            <select id="videoMode" class="w-full bg-studio-card border border-studio-border rounded-lg px-2 py-2 text-xs">
-              <option value="reactive">Audio-Reactive Visualizer</option>
-              <option value="i2v">Image-to-Video Motion</option>
-              <option value="t2v">Text-to-Video Synth</option>
+            <label class="text-[10px] text-zinc-400 block mb-1">Camera Movement</label>
+            <select id="cameraMotion" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs">
+              <option value="pulse">Beat-Synced Punch Zoom</option>
+              <option value="dolly">Cinematic Slow Dolly</option>
+              <option value="orbit">3D Parallax Float</option>
+              <option value="shake">Concert Bass Drop Shake</option>
+              <option value="static">Locked Broadcast Tripod</option>
             </select>
           </div>
           <div>
-            <label class="text-[10px] text-zinc-400 block mb-1">Camera Motion</label>
-            <select id="cameraMotion" class="w-full bg-studio-card border border-studio-border rounded-lg px-2 py-2 text-xs">
-              <option value="pulse">Beat-Synced Punch Zoom</option>
-              <option value="dolly">Slow Cinematic Dolly In</option>
-              <option value="orbit">3D Float & Sway</option>
-              <option value="shake">Bass Drop Concert Shake</option>
+            <label class="text-[10px] text-zinc-400 block mb-1">Visualizer Overlay</label>
+            <select id="vizStyle" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs">
+              <option value="bars">Neon Frequency Spectrum</option>
+              <option value="halo">Cyber Bass Ring</option>
+              <option value="wave">Oscilloscope Waveform</option>
+              <option value="none">Clean Cinematics</option>
             </select>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="text-[10px] text-zinc-400 block mb-1">Audio Visualizer Overlay</label>
-            <select id="vizStyle" class="w-full bg-studio-card border border-studio-border rounded-lg px-2 py-2 text-xs">
-              <option value="bars">Neon Frequency Bars</option>
-              <option value="halo">Cyber Ring Halo</option>
-              <option value="wave">Studio Oscilloscope Wave</option>
-              <option value="none">Clean Video (No Bars)</option>
+            <label class="text-[10px] text-zinc-400 block mb-1">Color Grade</label>
+            <select id="colorGrade" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs">
+              <option value="none">Neutral Master</option>
+              <option value="cyber">Teal & Orange Block</option>
+              <option value="matrix">Matrix Emerald</option>
+              <option value="noir">High Contrast Mono</option>
             </select>
           </div>
           <div>
-            <label class="text-[10px] text-zinc-400 block mb-1">Color Grade</label>
-            <select id="colorGrade" class="w-full bg-studio-card border border-studio-border rounded-lg px-2 py-2 text-xs">
-              <option value="none">Natural Master</option>
-              <option value="cyber">Teal & Magenta</option>
-              <option value="gold">Warm Analog Gold</option>
-              <option value="noir">High-Contrast B&W</option>
-            </select>
+            <label class="text-[10px] text-zinc-400 block mb-1">Filter Intensity</label>
+            <input type="range" id="filterIntensity" min="50" max="150" value="100" class="w-full mt-2" />
           </div>
         </div>
 
         <div>
-          <label class="text-[10px] text-zinc-400 block mb-1">Burn-In Kinetic Lyric / Title Overlay</label>
-          <input id="stageTitleInput" type="text" value="AURASTAGE • OFFICIAL VISUALIZER" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs text-white" />
+          <label class="text-[10px] text-zinc-400 block mb-1">Kinetic Subtitle / Hook Burn-In</label>
+          <input id="stageTitleInput" type="text" value="AURASTAGE AI • OFFICIAL MUSIC VIDEO" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs text-white font-semibold" />
         </div>
       </div>
     </div>
 
-    <!-- 3. PRODUCER & SINGER AUDIO SUITE -->
-    <div id="panel-music" class="hidden space-y-3">
+    <!-- 3. BEATS & VOCAL BOOTH -->
+    <div id="panel-beats" class="hidden space-y-3">
       <div class="bg-studio-panel border border-studio-border rounded-xl p-3 space-y-3">
         <div class="flex justify-between items-center">
-          <h2 class="text-xs font-bold uppercase tracking-wider text-pink-400">Beat Synth & Vocal Booth</h2>
-          <span class="text-xs font-mono text-cyan-400" id="bpmLabel">120 BPM</span>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-pink-400">Pro Beat Engine & Vocal Studio</h2>
+          <span class="text-xs font-mono text-cyan-400" id="bpmLabel">124 BPM</span>
         </div>
 
-        <!-- Beat Preset & BPM -->
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="text-[10px] text-zinc-400 block mb-1">AI Beat Genre</label>
-            <select id="beatGenre" class="w-full bg-studio-card border border-studio-border rounded-lg px-2 py-2 text-xs">
-              <option value="trap">Dark Trap / 808s</option>
-              <option value="afro">Afrobeats / Amapiano</option>
-              <option value="synthwave">80s Synthwave Pop</option>
+            <label class="text-[10px] text-zinc-400 block mb-1">Beat Style</label>
+            <select id="beatGenre" class="w-full bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs">
+              <option value="trap">Dark Trap & 808s</option>
+              <option value="amapiano">Amapiano Log Drum</option>
+              <option value="afro">Afrobeats Groove</option>
+              <option value="synthwave">Synthwave Pop</option>
               <option value="lofi">Chill Lo-Fi Hip Hop</option>
             </select>
           </div>
           <div>
             <label class="text-[10px] text-zinc-400 block mb-1">Tempo (BPM)</label>
-            <input type="range" id="bpmSlider" min="75" max="160" value="120" oninput="updateBpm(this.value)" class="w-full mt-2" />
+            <input type="range" id="bpmSlider" min="70" max="165" value="124" oninput="updateBpm(this.value)" class="w-full mt-2" />
           </div>
         </div>
 
-        <!-- 4-Channel Stem Mixer -->
+        <!-- 4-Track Stem Mixer -->
         <div class="bg-studio-card border border-studio-border rounded-lg p-2.5 space-y-2">
-          <div class="text-[10px] font-bold uppercase text-zinc-400">4-Track Stem Mixer</div>
+          <div class="text-[10px] font-bold uppercase text-zinc-400">Stem Mixer Channels</div>
           <div class="grid grid-cols-4 gap-2 text-center">
             <div>
-              <input type="range" id="volDrums" min="0" max="100" value="85" class="w-full" />
+              <input type="range" id="volDrums" min="0" max="100" value="90" class="w-full" />
               <span class="text-[10px] text-zinc-300 block">Drums</span>
             </div>
             <div>
-              <input type="range" id="volBass" min="0" max="100" value="80" class="w-full" />
+              <input type="range" id="volBass" min="0" max="100" value="85" class="w-full" />
               <span class="text-[10px] text-zinc-300 block">808 Bass</span>
             </div>
             <div>
@@ -236,59 +222,92 @@
           </div>
         </div>
 
-        <!-- Vocal Microphone Recorder & Audio Upload -->
+        <!-- Mic & File Import -->
         <div class="grid grid-cols-2 gap-2 pt-1">
           <button id="recordMicBtn" onclick="toggleMicRecord()" class="py-2.5 px-3 rounded-lg bg-red-600/20 border border-red-500/50 text-red-300 font-bold text-xs flex items-center justify-center gap-1.5">
             🎙️ Record Vocals
           </button>
           <label class="py-2.5 px-3 rounded-lg bg-studio-card border border-studio-border text-zinc-200 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer">
-            🎵 Import Beat/Song
+            🎵 Import Audio
             <input type="file" accept="audio/*" onchange="handleAudioUpload(event)" class="hidden" />
           </label>
         </div>
-        <p id="audioStatus" class="text-[11px] text-zinc-400 text-center">Active Source: Built-in Studio Beat Synthesizer</p>
+        <p id="audioStatus" class="text-[11px] text-zinc-400 text-center">Engine Ready: Built-in Procedural Synth</p>
       </div>
     </div>
 
-    <!-- 4. AI SONGWRITER & STORYBOARD -->
+    <!-- 4. LYRICS & SONGWRITER -->
     <div id="panel-lyrics" class="hidden space-y-3">
       <div class="bg-studio-panel border border-studio-border rounded-xl p-3 space-y-3">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-purple-400">AI Songwriter & Video Director</h2>
+        <h2 class="text-xs font-bold uppercase tracking-wider text-purple-400">AI Songwriter & Rhyme Assistant</h2>
         <div class="flex gap-2">
-          <input id="songTopic" type="text" placeholder="Song vibe or theme (e.g., Late night drive, chasing dreams)..." class="flex-1 bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs text-white" />
-          <button onclick="generateLyricsAndPlan()" class="px-3 py-2 rounded-lg bg-purple-600 text-xs font-bold text-white">Write</button>
+          <input id="songTopic" type="text" placeholder="Theme (e.g., Neon nights, overcoming odds)..." class="flex-1 bg-studio-card border border-studio-border rounded-lg px-2.5 py-2 text-xs text-white" />
+          <button onclick="generateLyricsAndPlan()" class="px-3 py-2 rounded-lg bg-purple-600 text-xs font-bold text-white">Generate</button>
         </div>
-        <textarea id="lyricsOutput" rows="7" class="w-full bg-studio-card border border-studio-border rounded-lg p-2.5 text-xs text-zinc-200 leading-relaxed" placeholder="Generated verse, hook, and music video shot list will appear here..."></textarea>
-        <button onclick="sendLyricToStage()" class="w-full py-2 rounded-lg bg-studio-card border border-purple-500/40 text-purple-300 text-xs font-semibold">📺 Sync Hook Text to Video Stage</button>
+        <textarea id="lyricsOutput" rows="7" class="w-full bg-studio-card border border-studio-border rounded-lg p-2.5 text-xs text-zinc-200 leading-relaxed" placeholder="Verses, hook, and shot list will appear here..."></textarea>
+        <button onclick="sendLyricToStage()" class="w-full py-2 rounded-lg bg-studio-card border border-purple-500/40 text-purple-300 text-xs font-semibold">📺 Sync Hook to Video Stage</button>
+      </div>
+    </div>
+
+    <!-- 5. PROFESSIONAL APP ICON STUDIO -->
+    <div id="panel-icon" class="hidden space-y-3">
+      <div class="bg-studio-panel border border-studio-border rounded-xl p-3 space-y-4">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Professional App Icon Studio</h2>
+          <p class="text-[11px] text-zinc-400 mt-0.5">Generate a high-end 512x512 adaptive icon for your Android app build.</p>
+        </div>
+
+        <div class="flex flex-col items-center justify-center p-3 bg-zinc-950 rounded-xl border border-studio-border">
+          <canvas id="iconCanvas" width="512" height="512" class="w-36 h-36 rounded-3xl shadow-2xl border border-purple-500/30 object-contain"></canvas>
+          <span class="text-[10px] text-zinc-400 mt-2">Preview (Adaptive Rounded Square)</span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div>
+            <label class="text-zinc-400 block mb-1">Icon Style / Theme</label>
+            <select id="iconTheme" onchange="renderAppIcon()" class="w-full bg-studio-card border border-studio-border rounded-lg p-2 text-white">
+              <option value="purple">Neon Purple & Cyan Gradient</option>
+              <option value="midnight">Midnight Obsidian & Gold</option>
+              <option value="cyber">Cyberpunk Pink & Electric Blue</option>
+              <option value="studio">Studio Producer Dark</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-zinc-400 block mb-1">Center Emblem</label>
+            <select id="iconEmblem" onchange="renderAppIcon()" class="w-full bg-studio-card border border-studio-border rounded-lg p-2 text-white">
+              <option value="AS">AS Monogram (AuraStage)</option>
+              <option value="mic">Microphone Studio</option>
+              <option value="wave">Audio Frequency Wave</option>
+              <option value="ai">AI Neural Spark</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="downloadAppIcon()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 font-bold text-xs text-white shadow-lg">⬇️ Download App Icon (PNG)</button>
       </div>
     </div>
 
   </main>
 
-  <!-- Multi-Format Export Modal -->
+  <!-- Export Modal -->
   <div id="exportModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-sm w-full p-4 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center">
-        <h3 class="text-sm font-bold text-white">Export Music Video</h3>
+        <h3 class="text-sm font-bold text-white">Export to Device Storage</h3>
         <button onclick="closeExportModal()" class="text-zinc-400 hover:text-white text-sm">✕</button>
       </div>
       <div class="space-y-2.5 text-xs">
         <div>
-          <label class="text-zinc-400 block mb-1">Container & Codec Format</label>
+          <label class="text-zinc-400 block mb-1">Format</label>
           <select id="exportFormat" class="w-full bg-studio-card border border-studio-border rounded-lg p-2 text-white">
-            <option value="mp4">MP4 (H.264 / AAC — Universal)</option>
-            <option value="webm">WebM (VP9 / Opus — High Efficiency)</option>
-            <option value="mov">MOV (ProRes Master Quality)</option>
-            <option value="mkv">MKV (Matroska Lossless)</option>
-            <option value="avi">AVI (Uncompressed Broadcast)</option>
-            <option value="gif">GIF (Animated Loop Preview)</option>
+            <option value="mp4">MP4 Video (Saves to Phone Storage)</option>
+            <option value="webm">WebM High Efficiency</option>
           </select>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-zinc-400 block mb-1">Resolution</label>
             <select id="exportRes" class="w-full bg-studio-card border border-studio-border rounded-lg p-2 text-white">
-              <option value="720p">720p HD</option>
               <option value="1080p" selected>1080p Full HD</option>
               <option value="4k">4K Ultra HD</option>
             </select>
@@ -296,36 +315,35 @@
           <div>
             <label class="text-zinc-400 block mb-1">Duration</label>
             <select id="exportDur" class="w-full bg-studio-card border border-studio-border rounded-lg p-2 text-white">
-              <option value="5">5 Seconds (Clip)</option>
-              <option value="10" selected>10 Seconds (Teaser)</option>
-              <option value="15">15 Seconds (Story/Reel)</option>
+              <option value="10" selected>10s Clip</option>
+              <option value="20">20s Reel</option>
+              <option value="30">30s Master</option>
             </select>
           </div>
         </div>
       </div>
-      <button onclick="startVideoExport()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 font-bold text-xs text-white shadow-lg">⬇️ Render & Download Video</button>
+      <button onclick="startVideoExport()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 font-bold text-xs text-white shadow-lg">📥 Render & Save to Device</button>
     </div>
   </div>
 
-  <!-- Optional API Key Modal -->
+  <!-- API Key Settings Modal -->
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-studio-panel border border-studio-border rounded-2xl max-w-sm w-full p-4 space-y-3">
       <div class="flex justify-between items-center">
-        <h3 class="text-sm font-bold">AI Engine Settings</h3>
+        <h3 class="text-sm font-bold">Cloud AI Engine Settings</h3>
         <button onclick="closeSettings()" class="text-zinc-400 text-sm">✕</button>
       </div>
-      <p class="text-[11px] text-zinc-400">Works offline with built-in procedural AI shaders & synth, or enter a Gemini API key for cloud lyrics & prompts.</p>
-      <input id="apiKeyInput" type="password" placeholder="Optional Gemini API Key..." class="w-full bg-studio-card border border-studio-border rounded-lg p-2 text-xs text-white" />
-      <button onclick="saveSettings()" class="w-full py-2 rounded-lg bg-purple-600 font-bold text-xs">Save Settings</button>
+      <p class="text-[11px] text-zinc-400">Works 100% offline with built-in procedural shaders, or enter an AI API key for enhanced cloud lyric generation.</p>
+      <input id="apiKeyInput" type="password" placeholder="Optional AI API Key..." class="w-full bg-studio-card border border-studio-border rounded-lg p-2 text-xs text-white" />
+      <button onclick="saveSettings()" class="w-full py-2 rounded-lg bg-purple-600 font-bold text-xs text-white">Save Settings</button>
     </div>
   </div>
 
   <script>
-    // --- STATE & INITIALIZATION ---
     const canvas = document.getElementById('stageCanvas');
     const ctx = canvas.getContext('2d');
     let isPlaying = false;
-    let bpm = 120;
+    let bpm = 124;
     let beatPhase = 0;
     let startTime = 0;
     let currentImage = null;
@@ -339,25 +357,26 @@
     let recordedVocalUrl = null;
     let uploadedAudioEl = null;
 
-    // Generate default starter cover art on load
     window.addEventListener('DOMContentLoaded', () => {
-      generateProceduralArt('Neon Cyber Horizon', 'Cinematic Neon', true);
+      generateProceduralArt('Cyberpunk Studio Neon', 'Neon Cyber', true);
       requestAnimationFrame(renderLoop);
+      loadSavedSession();
+      renderAppIcon();
     });
 
-    // --- TABS & MODALS ---
     function switchTab(tab) {
-      ['image', 'video', 'music', 'lyrics'].forEach(t => {
+      ['visual', 'director', 'beats', 'lyrics', 'icon'].forEach(t => {
         document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
         const btn = document.getElementById('tab-' + t);
         if (t === tab) {
           btn.classList.add('tab-active');
-          btn.classList.remove('bg-studio-card', 'text-zinc-300');
+          btn.classList.remove('bg-studio-card', 'text-zinc-300', 'text-cyan-400');
         } else {
           btn.classList.remove('tab-active');
-          btn.classList.add('bg-studio-card', 'text-zinc-300');
+          btn.classList.add('bg-studio-card', t === 'icon' ? 'text-cyan-400' : 'text-zinc-300');
         }
       });
+      if (tab === 'icon') renderAppIcon();
     }
 
     function openExportModal() { document.getElementById('exportModal').classList.remove('hidden'); }
@@ -370,86 +389,134 @@
     function saveSettings() {
       localStorage.setItem('aurastage_key', document.getElementById('apiKeyInput').value.trim());
       closeSettings();
+      alert('API Key saved successfully!');
     }
 
     function changeAspectRatio(ratio) {
       const container = document.getElementById('stageContainer');
-      const map = { '16:9': [960, 540], '9:16': [540, 960], '1:1': [720, 720], '4:5': [720, 900] };
+      const map = { '16:9': [960, 540], '9:16': [540, 960], '1:1': [720, 720], '2.39:1': [960, 402] };
       const [w, h] = map[ratio] || [960, 540];
-      canvas.width = w;
-      canvas.height = h;
+      canvas.width = w; canvas.height = h;
       container.style.aspectRatio = ratio.replace(':', '/');
       document.getElementById('aspectLabel').textContent = `${ratio} • 1080p`;
     }
 
-    // --- AI IMAGE GENERATOR (PROCEDURAL SHADER ART + GALLERY) ---
+    // --- APP ICON STUDIO GENERATOR ---
+    function renderAppIcon() {
+      const iconCanvas = document.getElementById('iconCanvas');
+      if (!iconCanvas) return;
+      const icx = iconCanvas.getContext('2d');
+      const theme = document.getElementById('iconTheme').value;
+      const emblem = document.getElementById('iconEmblem').value;
+
+      icx.clearRect(0, 0, 512, 512);
+
+      // Background Gradient
+      let g1 = '#7c3aed', g2 = '#06b6d4', g3 = '#090418';
+      if (theme === 'midnight') { g1 = '#18181b'; g2 = '#d97706'; g3 = '#09090b'; }
+      else if (theme === 'cyber') { g1 = '#db2777'; g2 = '#3b82f6'; g3 = '#0f051d'; }
+      else if (theme === 'studio') { g1 = '#27272a'; g2 = '#52525b'; g3 = '#09090b'; }
+
+      const bgGrad = icx.createLinearGradient(0, 0, 512, 512);
+      bgGrad.addColorStop(0, g1);
+      bgGrad.addColorStop(0.5, g3);
+      bgGrad.addColorStop(1, g2);
+      icx.fillStyle = bgGrad;
+      icx.fillRect(0, 0, 512, 512);
+
+      // Inner Glow Orb
+      const orb = icx.createRadialGradient(256, 256, 40, 256, 256, 200);
+      orb.addColorStop(0, 'rgba(255,255,255,0.25)');
+      orb.addColorStop(1, 'transparent');
+      icx.fillStyle = orb;
+      icx.fillRect(0, 0, 512, 512);
+
+      // Emblem Text / Symbol
+      icx.save();
+      icx.textAlign = 'center';
+      icx.textBaseline = 'middle';
+      if (emblem === 'AS') {
+        icx.font = '900 160px system-ui, sans-serif';
+        icx.fillStyle = '#ffffff';
+        icx.shadowColor = 'rgba(0,0,0,0.8)';
+        icx.shadowBlur = 25;
+        icx.fillText('AS', 256, 256);
+      } else if (emblem === 'mic') {
+        icx.font = '900 130px system-ui, sans-serif';
+        icx.fillStyle = '#ffffff';
+        icx.fillText('🎙️', 256, 256);
+      } else if (emblem === 'wave') {
+        icx.font = '900 130px system-ui, sans-serif';
+        icx.fillStyle = '#06b6d4';
+        icx.fillText('🎛️', 256, 256);
+      } else {
+        icx.font = '900 130px system-ui, sans-serif';
+        icx.fillStyle = '#ec4899';
+        icx.fillText('✨', 256, 256);
+      }
+      icx.restore();
+    }
+
+    function downloadAppIcon() {
+      const iconCanvas = document.getElementById('iconCanvas');
+      const url = iconCanvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'AuraStage_AppIcon_512.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
     function generateVisualArt() {
-      const prompt = document.getElementById('imgPrompt').value.trim() || 'Futuristic Neon Stage';
-      const style = document.getElementById('stylePreset').value;
+      const prompt = document.getElementById('imgPrompt').value.trim() || 'Neon Stage';
+      const lighting = document.getElementById('lightingPreset').value;
       const btn = document.getElementById('genImgBtn');
       btn.textContent = 'Rendering...';
       setTimeout(() => {
-        generateProceduralArt(prompt, style, false);
-        btn.textContent = '✨ Generate Scene';
+        generateProceduralArt(prompt, lighting, false);
+        btn.textContent = '✨ Render Scene';
       }, 300);
     }
 
-    function generateProceduralArt(prompt, style, isInit) {
+    function generateProceduralArt(prompt, lighting, isInit) {
       const off = document.createElement('canvas');
       off.width = 800; off.height = 800;
       const c = off.getContext('2d');
 
       const palettes = {
-        'Cinematic Neon': ['#090418', '#7c3aed', '#06b6d4', '#ec4899'],
-        'Cyberpunk 2099': ['#05050a', '#f43f5e', '#eab308', '#3b82f6'],
-        'Lo-Fi Anime': ['#1e1b4b', '#818cf8', '#f472b6', '#fbbf24'],
-        '3D Unreal Render': ['#0f172a', '#10b981', '#06b6d4', '#6366f1'],
-        'Retro 90s VHS': ['#180c2e', '#d946ef', '#f97316', '#22d3ee'],
-        'Luxury Editorial': ['#0c0a09', '#d97706', '#fef3c7', '#78350f']
+        'Neon Cyber': ['#090418', '#7c3aed', '#06b6d4', '#ec4899'],
+        'Golden Hour': ['#180c05', '#d97706', '#f59e0b', '#ef4444'],
+        'Moody Noir': ['#050508', '#3f3f46', '#71717a', '#a1a1aa'],
+        'Strobe Laser': ['#040714', '#2563eb', '#10b981', '#a855f7'],
+        'Holographic': ['#0a071e', '#ec4899', '#3b82f6', '#06b6d4']
       };
-      const cols = palettes[style] || palettes['Cinematic Neon'];
+      const cols = palettes[lighting] || palettes['Neon Cyber'];
 
-      // Background gradient
       const grad = c.createLinearGradient(0, 0, 800, 800);
-      grad.addColorStop(0, cols[0]);
-      grad.addColorStop(0.5, cols[1]);
-      grad.addColorStop(1, cols[0]);
-      c.fillStyle = grad;
-      c.fillRect(0, 0, 800, 800);
+      grad.addColorStop(0, cols[0]); grad.addColorStop(0.5, cols[1]); grad.addColorStop(1, cols[0]);
+      c.fillStyle = grad; c.fillRect(0, 0, 800, 800);
 
-      // Sun / Aura Orb
-      const orb = c.createRadialGradient(400, 340, 20, 400, 340, 260);
-      orb.addColorStop(0, cols[2]);
-      orb.addColorStop(0.6, cols[3] + '88');
-      orb.addColorStop(1, 'transparent');
-      c.fillStyle = orb;
-      c.beginPath(); c.arc(400, 340, 260, 0, Math.PI * 2); c.fill();
+      const orb = c.createRadialGradient(400, 340, 20, 400, 340, 280);
+      orb.addColorStop(0, cols[2]); orb.addColorStop(0.6, cols[3] + '88'); orb.addColorStop(1, 'transparent');
+      c.fillStyle = orb; c.beginPath(); c.arc(400, 340, 280, 0, Math.PI * 2); c.fill();
 
-      // Perspective Horizon Grid
-      c.strokeStyle = cols[2] + '66';
-      c.lineWidth = 2;
+      c.strokeStyle = cols[2] + '77'; c.lineWidth = 2;
       for (let i = 0; i < 14; i++) {
-        const y = 460 + i * 26;
+        let y = 460 + i * 26;
         c.beginPath(); c.moveTo(0, y); c.lineTo(800, y); c.stroke();
       }
       for (let i = -8; i <= 8; i++) {
         c.beginPath(); c.moveTo(400 + i * 35, 460); c.lineTo(400 + i * 140, 800); c.stroke();
       }
 
-      // Geometric Centerpiece
-      c.strokeStyle = '#ffffffcc';
-      c.lineWidth = 4;
-      c.beginPath();
-      c.moveTo(400, 180); c.lineTo(540, 430); c.lineTo(260, 430); c.closePath();
-      c.stroke();
-
       const dataUrl = off.toDataURL('image/png');
       loadImageToStage(dataUrl);
       if (!isInit) {
-        galleryItems.unshift({ url: dataUrl, label: prompt.slice(0, 18) });
+        galleryItems.unshift({ url: dataUrl, label: prompt.slice(0, 16) });
         renderGallery();
       } else {
-        galleryItems.push({ url: dataUrl, label: 'Aura Horizon' });
+        galleryItems.push({ url: dataUrl, label: 'Studio Master' });
         renderGallery();
       }
     }
@@ -460,7 +527,7 @@
       const reader = new FileReader();
       reader.onload = ev => {
         loadImageToStage(ev.target.result);
-        galleryItems.unshift({ url: ev.target.result, label: file.name.slice(0, 14) });
+        galleryItems.unshift({ url: ev.target.result, label: file.name.slice(0, 12) });
         renderGallery();
       };
       reader.readAsDataURL(file);
@@ -482,7 +549,6 @@
       `).join('');
     }
 
-    // --- WEB AUDIO SYNTHESIZER, MIXER & VOCAL BOOTH ---
     function initAudio() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -502,10 +568,7 @@
 
     function startBeatEngine() {
       initAudio();
-      if (uploadedAudioEl) {
-        uploadedAudioEl.play();
-        return;
-      }
+      if (uploadedAudioEl) { uploadedAudioEl.play(); return; }
       let step = 0;
       const intervalMs = (60 / bpm / 2) * 1000;
       beatTimer = setInterval(() => {
@@ -516,286 +579,41 @@
 
     function stopBeatEngine() {
       if (beatTimer) { clearInterval(beatTimer); beatTimer = null; }
-      if (uploadedAudioEl) { uploadedAudioEl.pause(); }
+      if (uploadedAudioEl) uploadedAudioEl.pause();
     }
 
     function triggerSynthStep(step) {
       if (!audioCtx || !analyser) return;
       const now = audioCtx.currentTime;
       const genre = document.getElementById('beatGenre').value;
-      const drumVol = document.getElementById('volDrums').value / 100;
-      const bassVol = document.getElementById('volBass').value / 100;
-      const synthVol = document.getElementById('volSynth').value / 100;
+      const dVol = document.getElementById('volDrums').value / 100;
+      const bVol = document.getElementById('volBass').value / 100;
 
-      // Kick & 808 on beats 0, 3, 4, 6
-      if ((step === 0 || step === 4 || (genre === 'afro' && step === 3)) && drumVol > 0) {
+      if ((step === 0 || step === 4 || (genre === 'amapiano' && step === 3)) && dVol > 0) {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.exponentialRampToValueAtTime(38, now + 0.18);
-        gain.gain.setValueAtTime(drumVol * 0.7, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        osc.connect(gain); gain.connect(analyser);
-        osc.start(now); osc.stop(now + 0.26);
-        beatPhase = 1.0;
-      }
-
-      // Snare / Clap on 2 & 6
-      if ((step === 2 || step === 6) && drumVol > 0) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(240, now);
-        gain.gain.setValueAtTime(drumVol * 0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
-        osc.connect(gain); gain.connect(analyser);
-        osc.start(now); osc.stop(now + 0.15);
-      }
-
-      // 808 Sub Bass
-      if ((step === 0 || step === 5) && bassVol > 0) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        const notes = genre === 'trap' ? [55, 49] : [65.4, 73.4];
-        osc.frequency.setValueAtTime(notes[step === 0 ? 0 : 1], now);
-        gain.gain.setValueAtTime(bassVol * 0.22, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-        osc.connect(gain); gain.connect(analyser);
-        osc.start(now); osc.stop(now + 0.36);
-      }
-
-      // Melody Arp
-      if (synthVol > 0 && step % 2 === 0) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = genre === 'lofi' ? 'sine' : 'square';
-        const scale = [220, 261.6, 329.6, 392.0];
-        osc.frequency.setValueAtTime(scale[(step / 2) % scale.length], now);
-        gain.gain.setValueAtTime(synthVol * 0.12, now);
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.18);
+        gain.gain.setValueAtTime(dVol * 0.75, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
         osc.connect(gain); gain.connect(analyser);
         osc.start(now); osc.stop(now + 0.23);
-      }
-    }
-
-    function handleAudioUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      initAudio();
-      const url = URL.createObjectURL(file);
-      uploadedAudioEl = new Audio(url);
-      uploadedAudioEl.crossOrigin = 'anonymous';
-      const src = audioCtx.createMediaElementSource(uploadedAudioEl);
-      src.connect(analyser);
-      document.getElementById('audioStatus').textContent = `Loaded Track: ${file.name}`;
-    }
-
-    async function toggleMicRecord() {
-      const btn = document.getElementById('recordMicBtn');
-      if (!isRecordingMic) {
-        try {
-          initAudio();
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          const chunks = [];
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = e => chunks.push(e.data);
-          mediaRecorder.onstop = () => {
-            const blob = new Blob(chunks, { type: 'audio/webm' });
-            recordedVocalUrl = URL.createObjectURL(blob);
-            uploadedAudioEl = new Audio(recordedVocalUrl);
-            const src = audioCtx.createMediaElementSource(uploadedAudioEl);
-            src.connect(analyser);
-            document.getElementById('audioStatus').textContent = 'Vocal Take Recorded & Loaded on Stage!';
-          };
-          mediaRecorder.start();
-          isRecordingMic = true;
-          btn.textContent = '⏹ Stop Recording';
-          btn.classList.add('animate-pulse');
-        } catch (err) {
-          alert('Microphone permission required to record vocals.');
-        }
-      } else {
-        mediaRecorder.stop();
-        isRecordingMic = false;
-        btn.textContent = '🎙️ Record Vocals';
-        btn.classList.remove('animate-pulse');
-      }
-    }
-
-    // --- TRANSPORT PLAYBACK ---
-    function togglePlayback() {
-      isPlaying = !isPlaying;
-      document.getElementById('playPauseBtn').textContent = isPlaying ? '❚❚' : '▶';
-      if (isPlaying) {
-        startTime = performance.now();
-        startBeatEngine();
-      } else {
-        stopBeatEngine();
-      }
-    }
-
-    function stopPlayback() {
-      isPlaying = false;
-      document.getElementById('playPauseBtn').textContent = '▶';
-      stopBeatEngine();
-      document.getElementById('timeDisplay').textContent = '00:00 / 00:15';
-    }
-
-    // --- REAL-TIME VIDEO STAGE RENDER LOOP ---
-    function renderLoop(now) {
-      const w = canvas.width;
-      const h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-
-      if (isPlaying) {
-        const sec = Math.floor((now - startTime) / 1000) % 16;
-        document.getElementById('timeDisplay').textContent = `00:${String(sec).padStart(2, '0')} / 00:15`;
+        beatPhase = 1.0;
       }
 
-      // Audio energy calculation
-      let bassEnergy = beatPhase;
-      beatPhase *= 0.9;
-      if (analyser && dataArray && isPlaying) {
-        analyser.getByteFrequencyData(dataArray);
-        let sum = 0;
-        for (let i = 0; i < 12; i++) sum += dataArray[i];
-        bassEnergy = Math.max(bassEnergy, (sum / 12) / 255);
+      if ((step === 2 || step === 6) && dVol > 0) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, now);
+        gain.gain.setValueAtTime(dVol * 0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(gain); gain.connect(analyser);
+        osc.start(now); osc.stop(now + 0.13);
       }
 
-      // Camera Motion Transforms
-      const motion = document.getElementById('cameraMotion').value;
-      ctx.save();
-      let scale = 1.0;
-      let tx = 0, ty = 0;
-      if (motion === 'pulse') scale = 1.0 + bassEnergy * 0.08;
-      if (motion === 'dolly') scale = 1.0 + ((now * 0.00005) % 0.15);
-      if (motion === 'orbit') { tx = Math.sin(now * 0.002) * 18; ty = Math.cos(now * 0.0015) * 12; scale = 1.06; }
-      if (motion === 'shake') { tx = (Math.random() - 0.5) * bassEnergy * 24; ty = (Math.random() - 0.5) * bassEnergy * 24; scale = 1.05; }
-
-      ctx.translate(w / 2 + tx, h / 2 + ty);
-      ctx.scale(scale, scale);
-      ctx.translate(-w / 2, -h / 2);
-
-      // Color Grade Filter
-      const grade = document.getElementById('colorGrade').value;
-      if (grade === 'cyber') ctx.filter = 'contrast(120%) saturate(145%) hue-rotate(-12deg)';
-      else if (grade === 'gold') ctx.filter = 'sepia(35%) saturate(140%) contrast(110%)';
-      else if (grade === 'noir') ctx.filter = 'grayscale(100%) contrast(140%)';
-      else ctx.filter = 'none';
-
-      // Draw Base Image
-      if (currentImage) {
-        const imgRatio = currentImage.width / currentImage.height;
-        const canRatio = w / h;
-        let dw = w, dh = h, dx = 0, dy = 0;
-        if (imgRatio > canRatio) { dw = h * imgRatio; dx = (w - dw) / 2; }
-        else { dh = w / imgRatio; dy = (h - dh) / 2; }
-        ctx.drawImage(currentImage, dx, dy, dw, dh);
-      }
-      ctx.restore();
-
-      // Dark vignette for crisp visualizer contrast
-      const vig = ctx.createRadialGradient(w / 2, h / 2, w * 0.25, w / 2, h / 2, w * 0.75);
-      vig.addColorStop(0, 'rgba(0,0,0,0.05)');
-      vig.addColorStop(1, 'rgba(0,0,0,0.65)');
-      ctx.fillStyle = vig;
-      ctx.fillRect(0, 0, w, h);
-
-      // Audio Visualizer Layer
-      const viz = document.getElementById('vizStyle').value;
-      if (viz === 'bars') {
-        const bars = 40;
-        const barW = (w * 0.7) / bars;
-        const startX = w * 0.15;
-        for (let i = 0; i < bars; i++) {
-          const val = (analyser && isPlaying && dataArray) ? dataArray[i % dataArray.length] / 255 : (Math.sin(now * 0.005 + i * 0.4) * 0.25 + 0.3);
-          const barH = Math.max(8, val * (h * 0.28));
-          ctx.fillStyle = i % 2 === 0 ? '#06b6d4' : '#ec4899';
-          ctx.fillRect(startX + i * barW, h - 55 - barH, barW - 3, barH);
-        }
-      } else if (viz === 'halo') {
-        ctx.save();
-        ctx.strokeStyle = '#06b6d4';
-        ctx.lineWidth = 4 + bassEnergy * 8;
-        ctx.beginPath();
-        ctx.arc(w / 2, h / 2, Math.min(w, h) * (0.22 + bassEnergy * 0.06), 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-      } else if (viz === 'wave') {
-        ctx.strokeStyle = '#ec4899';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        for (let x = 0; x < w; x += 12) {
-          const amp = (15 + bassEnergy * 60) * Math.sin(x * 0.02 + now * 0.01);
-          const y = h * 0.78 + amp;
-          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-
-      // Kinetic Lyric / Title Overlay
-      const titleText = document.getElementById('stageTitleInput').value.trim();
-      if (titleText) {
-        ctx.save();
-        ctx.font = `900 ${Math.round(w * 0.036)}px system-ui, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = 'rgba(0,0,0,0.85)';
-        ctx.shadowBlur = 12;
-        ctx.fillText(titleText.toUpperCase(), w / 2, h - 22);
-        ctx.restore();
-      }
-
-      requestAnimationFrame(renderLoop);
-    }
-
-    // --- AI SONGWRITER & STORYBOARD ---
-    function generateLyricsAndPlan() {
-      const topic = document.getElementById('songTopic').value.trim() || 'Midnight Neon Highway';
-      const output = `[HOOK - ${topic.toUpperCase()}]\nCity lights blur through the midnight glass,\nBassline heavy while the shadows pass,\nTurn the studio up, let the whole world see,\nEvery beat hits hard in full 4K HD.\n\n[MUSIC VIDEO SHOT LIST]\n• 0:00-0:04: Wide dolly zoom into neon horizon + bass drop pulse\n• 0:04-0:10: Singer silhouette with cyan frequency bars & kinetic hook\n• 0:10-0:15: High-energy concert camera shake on chorus drop`;
-      document.getElementById('lyricsOutput').value = output;
-    }
-
-    function sendLyricToStage() {
-      const lines = document.getElementById('lyricsOutput').value.split('\n').filter(l => l && !l.startsWith('[') && !l.startsWith('•'));
-      if (lines.length) {
-        document.getElementById('stageTitleInput').value = lines[0];
-        switchTab('video');
-      }
-    }
-
-    // --- MULTI-FORMAT VIDEO EXPORT ENGINE ---
-    function startVideoExport() {
-      const fmt = document.getElementById('exportFormat').value;
-      const durSec = parseInt(document.getElementById('exportDur').value, 10) || 10;
-      closeExportModal();
-
-      if (!isPlaying) togglePlayback();
-      document.getElementById('recBadge').classList.remove('hidden');
-
-      const stream = canvas.captureStream(30);
-      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
-      const recorder = new MediaRecorder(stream, { mimeType });
-      const chunks = [];
-
-      recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-      recorder.onstop = () => {
-        document.getElementById('recBadge').classList.add('hidden');
-        const blob = new Blob(chunks, { type: mimeType });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `AuraStage_MusicVideo.${fmt}`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      };
-
-      recorder.start();
-      setTimeout(() => { recorder.stop(); }, durSec * 1000);
-    }
-  </script>
-</body>
-</html>
+      if ((step === 0 || step === 5) && bVol > 0) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(genre === 'amapiano' ? 50 : 58, now);
