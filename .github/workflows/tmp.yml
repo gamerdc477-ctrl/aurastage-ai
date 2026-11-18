@@ -26,18 +26,19 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Initialize Capacitor and Android 7.0+ Project
+      - name: Initialize Project & Build APK
         run: |
+          mkdir -p .github/workflows
           mkdir -p www
-          cp index.html www/
+          if [ -f index.html ]; then cp index.html www/; fi
           npm install
-          npx cap init "AuraStage AI" "com.aurastage.app" --web-dir www
+          npx cap init "AuraStage AI Pro" "com.aurastage.pro" --web-dir www
           npx cap add android
           sed -i 's/minSdkVersion = [0-9]*/minSdkVersion = 24/' android/variables.gradle
           sed -i '/<application/i \    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />' android/app/src/main/AndroidManifest.xml
           npx cap sync android
 
-      - name: Build Debug APK
+      - name: Compile Debug APK
         run: |
           cd android
           chmod +x gradlew
